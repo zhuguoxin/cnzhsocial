@@ -1,5 +1,7 @@
 <?php
-
+/*
+* Load one of the site map, list all the article.
+*/
 if(!isset($_GET['xmlurl'])){
     echo '<br/>请给出sitemap url地址。';
 }else{
