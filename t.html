@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh">
+
+<head>
+    <meta name="description" content="短网址批量生成" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+        crossorigin="anonymous"></script>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83860431-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#toshort").click(function () {
+                // alert($("#longurls").val());
+                //alert("Hello");
+                var text = $("#longurls").val().split('\n');
+                var urls = cleanArray(text);
+                generateShortURLs(urls);
+                // alert(urls);
+            });
+        });
+
+        function cleanArray(actual) {
+            var newArray = new Array();
+            for (var i = 0; i < actual.length; i++) {
+                if ($.trim(actual[i])) {
+                    newArray.push($.trim(actual[i]));
+                }
+            }
+            return newArray;
+        }
+
+        function generateShortURLs(longlist) {
+            //$("#shorturls").val(longlist);
+
+            for (i = 0; i < longlist.length; i++) {
+                $("#shorturls").append(longlist[i] + '\n');
+            }
+
+        }
+
+        function shortenURL(longurl) {
+            $.getJSON('http://query.yahooapis.com/v1/public/yql?q=select%20%2a%20from%20yahoo.finance.quotes%20WHERE%20symbol%3D%27WRC%27&format=json&diagnostics=true&env=store://datatables.org/alltableswithkeys&callback', function (data) {
+                //data is the JSON string
+            });
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Content here -->
+        <br/>
+        <h3 style="text-align:center">新浪短链接批量生成工具</h3>
+        <div class="row">
+            <div class="col-5">
+                请贴入长链接列表，每一行一个链接。<br/>
+                <textarea name="longurls" id="longurls" class="form-control" rows="20"></textarea>
+            </div>
+            <div class="col-2" style="text-align:center">
+                <br/><br/>
+                <button type="button" class="btn btn-primary" name="toshort" id="toshort">变短</button>
+            </div>
+            <div class="col-5">
+                短链接列表<br/>
+                <textarea name="shorturls" id="shorturls" class="form-control" rows="20"></textarea>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
