@@ -30,13 +30,23 @@
  }
  function getShortUrls(){
      $shorturls = "";
-     if(!isset($_POST["longurls"])){
+     $longurls = getLongUrls();
+     if(!$longurls || !isset($_POST["longurls"])){
          return "";
      }else{
-         $longurls = $_POST["longurls"];
-
-         return $longurls;
+         $longurlArray = explode(PHP_EOL,$_POST['longurls']);
+         for($c=0; $c<sizeof($longurlArray); $c++ ){
+            if (filter_var( $longurlArray[$c], FILTER_VALIDATE_URL)) {
+                $shorturls = $shorturls . xlUrlAPI(1,$longurlArray[$c]) . PHP_EOL;
+               // echo "valid" . $c ."<br/>";
+            } else {
+                $shorturls = $shorturls . " " .$longurlArray[$c]. PHP_EOL;
+               // echo "invalid" . $c ."<br/>";
+            }
+             
+         }
      }
+     return $shorturls;
  }
 
  function getLongUrls(){
@@ -88,34 +98,6 @@
                 $("#urls").submit();
             });
         });
-
-        function cleanArray(actual) {
-            var newArray = new Array();
-            for (var i = 0; i < actual.length; i++) {
-                if ($.trim(actual[i])) {
-                    newArray.push($.trim(actual[i]));
-                }
-            }
-            return newArray;
-        }
-
-        function generateShortURLs(longlist) {
-            //$("#shorturls").val(longlist);
-            $("#shorturls").text("");
-           var shorturl = "";
-            for (i = 0; i < longlist.length; i++) {
-                shorturl = longlist[i] + '\n';
-                $("#shorturls").append(shorturl);
-            }
-
-        }
-
-        function shortenURL(longurl) {
-            $.get('', function (data) {
-                //data is the JSON string
-                alert(data);
-            });
-        }
     </script>
 </head>
 
@@ -125,11 +107,20 @@
         <!-- Content here -->
         <br/>
         <h3 style="text-align:center">新浪短链接批量生成工具</h3>
+        1. 可以只贴长链接列表，每一行一个链接。点击“变短”之后，短链接会出现在右侧窗口<br/>
+        2. 建议同时贴新闻标题和长链接， 以免出现无法对应的情况。每一个标题的下一行是它的链接。譬如：<br/>
+        <div style="font-size:0.5em;color:blue">
+        韩前总统朴槿惠首次出庭受审 全盘否认18项罪名<br/>	http://www.chinesenzherald.co.nz/news/international/park-geun-hye-first-trial<br/>
+        政府或将出台租房新规：房屋损坏租客需赔偿！<br/>	http://www.chinesenzherald.co.nz/news/property/law-change-may-see-tenants-liable-for-a-landlords-insurance-excess/<br/>
+        5月24日天气和早间新闻：房东房客们注意，房屋损坏租客将需赔偿！英国恐袭凶手年仅22岁<br/>	http://www.chinesenzherald.co.nz/news/new-zealand/morning-20170524/<br/>
+        “不能居住”的70万纽币物业，你会买吗？<br/>	http://www.chinesenzherald.co.nz/news/property/historic-boatshed-for-sale/<br/>
+        英国再遭恐袭，欧洲可能永无宁日<br/>	http://www.chinesenzherald.co.nz/news/international/explosions-in-manchester/<br/><br/>
+        </div>
         <form action="" method="post" id="urls">
         <div class="row">
             <div class="col-5">
-                请贴入长链接列表，每一行一个链接。<br/>
-                <textarea name="longurls" id="longurls" class="form-control" rows="20"></textarea>
+                长链接列表<br/>
+                <textarea name="longurls" id="longurls" class="form-control" rows="20"><?=getLongUrls()?></textarea>
             </div>
             <div class="col-2" style="text-align:center">
                 <br/><br/>
@@ -137,7 +128,7 @@
             </div>
             <div class="col-5">
                 短链接列表<br/>
-                <textarea name="shorturls" id="shorturls" class="form-control" rows="20"><?php if(isset($_POST["longurls"]))?><?=getShortUrls()?></textarea>
+                <textarea name="shorturls" id="shorturls" class="form-control" rows="20"><?=getShortUrls()?></textarea>
             </div>
         </div>
     </form>
