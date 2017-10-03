@@ -57,13 +57,56 @@
         return $longurls;
     }
 }
- /*
- echo '<br/><br/>----------新浪短网址API----------<br/><br/>';
- for($i=0;$i<=9;$i++){
-    echo 'Long to Short: '.$i.xlUrlAPI(1,'https://typecodes.com/'.$i).'<br/>';
+//刷新缓存代码
+
+function getPurgeURLdata(){
+     if(!isset($_POST["purgeurls"])){
+         return '';
+     }else{
+	 $inputURL = $_POST['purgeurls'];
+		if (filter_var( $inputURL, FILTER_VALIDATE_URL)) {
+				if($inputURL[strlen($inputURL)-1]!='/'){
+					$inputURL = $inputURL.'/';
+				}
+				$js = '{"files":["'.
+				$inputURL .'","'.
+				$inputURL . '?from=groupmessage","'.
+				$inputURL . '?from=groupmessage&isappinstalled=0","'.
+				$inputURL . '?from=timeline","'.
+				$inputURL . '?from=timeline&isappinstalled=0","'.
+				$inputURL . '?from=singlemessage"]}';
+			
+		 }else{
+			 return '';
+		 }
+		// $inputURLParameterlist = substr($inputURLParameterlist,0,-1);
+     }
+	 $purgeURL = 'https://api.cloudflare.com/client/v4/zones/1ea3465bf3f0c691de549ce55a7360a6/purge_cache';
+	$ch=curl_init();
+   curl_setopt($ch, CURLOPT_URL,$purgeURL);
+   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'X-Auth-Email:admin@chinesenzherald.co.nz',
+    'X-Auth-Key: 83ce0a7bd06c547d17ddc44bd80b1bd3e8cb8',
+	'Content-Type: application/json'
+    ));
+   curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+   curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+   curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+   echo $js;
+   curl_setopt($ch, CURLOPT_POSTFIELDS,$js);
+   $strRes=curl_exec($ch);
+   if(!$strRes = curl_exec($ch)) 
+    { 
+        trigger_error(curl_error($ch)); 
+    }
+   echo '----strRes:'.$strRes;
+   curl_close($ch);
+   $arrResponse=json_decode($strRes,true);
+   return $arrResponse->success;
  }
- echo 'Short to Long: '.xlUrlAPI(0,'http://t.cn/8FdW1rm').'<br/><br/>';
- */
+
 ?>
 <!doctype html>
 <html lang="zh">
@@ -98,18 +141,33 @@
                 $("#urls").submit();
             });
         });
+		$(document).ready(function () {
+            $("#refreshCache").click(function () {
+                $("#purgeurl").submit();
+            });
+        });
     </script>
 </head>
 
 <body>
 
     <div class="container">
+	  <h3 style="text-align:center">缓存刷新</h3>
+	  <form action="" method="post" id="purgeurl">
+        <div class="row">
+                刷新链接列表<br/>
+                <textarea name="purgeurls" id="purgeurls" class="form-control" rows="2"></textarea><button type="button" class="btn btn-primary" name="refreshCache" id="refreshCache">刷新</button>
+		</div>
+		<div class="row">
+		<?=getPurgeURLdata()?>
+		</div>
+    </form>
         <!-- Content here -->
         <br/>
         <h3 style="text-align:center">新浪短链接批量生成工具</h3>
         1. 可以只贴长链接列表，每一行一个链接。点击“变短”之后，短链接会出现在右侧窗口<br/>
         2. 建议同时贴新闻标题和长链接， 以免出现无法对应的情况。每一个标题的下一行是它的链接。譬如：<br/>
-        <div style="font-size:0.5em;color:blue">
+        <div style="font-size:0.8em;color:blue">
         韩前总统朴槿惠首次出庭受审 全盘否认18项罪名<br/>	http://www.chinesenzherald.co.nz/news/international/park-geun-hye-first-trial<br/>
         政府或将出台租房新规：房屋损坏租客需赔偿！<br/>	http://www.chinesenzherald.co.nz/news/property/law-change-may-see-tenants-liable-for-a-landlords-insurance-excess/<br/>
         5月24日天气和早间新闻：房东房客们注意，房屋损坏租客将需赔偿！英国恐袭凶手年仅22岁<br/>	http://www.chinesenzherald.co.nz/news/new-zealand/morning-20170524/<br/>
