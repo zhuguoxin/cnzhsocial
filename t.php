@@ -143,6 +143,10 @@ function getPurgeURLdata(){
         });
 		$(document).ready(function () {
             $("#refreshCache").click(function () {
+				if($("#purgeurls").val().trim()==""){
+					alert("请输入url");
+					return false;
+				}
                 $("#purgeurl").submit();
             });
         });
@@ -154,9 +158,12 @@ function getPurgeURLdata(){
     <div class="container">
 	  <h3 style="text-align:center">缓存刷新</h3>
 	  <form action="" method="post" id="purgeurl">
-        <div class="row">
-                刷新链接列表<br/>
-                <textarea name="purgeurls" id="purgeurls" class="form-control" rows="2"></textarea><button type="button" class="btn btn-primary" name="refreshCache" id="refreshCache">刷新</button>
+        <div class="row" >
+                刷新链接<br/>
+                <textarea name="purgeurls" id="purgeurls" class="form-control" rows="2"></textarea>
+				<div class="container">
+				<button type="button" class="btn btn-primary" name="refreshCache" id="refreshCache">刷新</button>
+				</div>
 		</div>
 		<div class="row">
 		<?=getPurgeURLdata()?>
@@ -171,8 +178,6 @@ function getPurgeURLdata(){
         韩前总统朴槿惠首次出庭受审 全盘否认18项罪名<br/>	http://www.chinesenzherald.co.nz/news/international/park-geun-hye-first-trial<br/>
         政府或将出台租房新规：房屋损坏租客需赔偿！<br/>	http://www.chinesenzherald.co.nz/news/property/law-change-may-see-tenants-liable-for-a-landlords-insurance-excess/<br/>
         5月24日天气和早间新闻：房东房客们注意，房屋损坏租客将需赔偿！英国恐袭凶手年仅22岁<br/>	http://www.chinesenzherald.co.nz/news/new-zealand/morning-20170524/<br/>
-        “不能居住”的70万纽币物业，你会买吗？<br/>	http://www.chinesenzherald.co.nz/news/property/historic-boatshed-for-sale/<br/>
-        英国再遭恐袭，欧洲可能永无宁日<br/>	http://www.chinesenzherald.co.nz/news/international/explosions-in-manchester/<br/><br/>
         </div>
         <form action="" method="post" id="urls">
         <div class="row">
